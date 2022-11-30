@@ -1,0 +1,176 @@
+const articulacaoSchema = {
+  $id: 'articulation',
+  type: object,
+  properties:{
+    nomeArticulacao: {type: 'string'},
+    urlImagem: {type: 'string'}
+    movimento: {
+      type: 'array', 
+      items: {$ref: 'moviment'}
+    }
+  }
+}
+const movimentoSchema = {
+  $id: 'moviment',
+  type: object,
+  properties:{
+    nomeMovimento: {type : 'string'},
+    musculosDeMovimento: {type: 'object', $ref: 'muscleMoviment'},
+    grauDeAmplitude: 'string'
+  }
+}
+const musculodeMovimentoSchema = {
+  $id: 'muscleMoviment',
+  type: object,
+  properties: {
+    agonistas : {
+      type: 'array',
+      items: {type: 'object', $ref: 'muscles'}
+      }
+  }
+}
+const muscles = {
+  $id: 'muscles',
+  type: 'object', 
+  properties: {
+    nome: {type: 'string'},
+    origem: {
+      type: 'array',
+      items: {type: 'string'}
+    },
+    insercao: {
+      type: 'array',
+      items: {type: 'string'}
+    }
+  }
+}
+
+  
+<div class="row">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="card-container">
+    <div class="col text-center" id="card{index}" onclick="">
+      <a class="btn btn-light" data-bs-toggle="collapse" href="#collapseCard{index}" role="button" aria-expanded="false" aria-controls="collapseCard{index}">
+        <span class="alert alert-success">{nomeArticulacao}</span>
+        <img class="card-img-top" src={urlImagem} alt={nomeArticulacao} />
+      </a> 
+    </div>
+    <div class="card collapse" id="collapseCard{index+1}">
+      <div class="card-header">
+        <h5 class="card-title">{nomeArticulacao}</h5>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Movimentos</h5>
+        ## para cada item
+        <div class="accordion accordion-flush" id="accordionMoviments">
+          <div class="accordion-item">
+            <h2 class="acordion-header" id="flush-heading{id}">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{id}" aria-expanded="false" aria-controls="flush-collapse{id}">{nomeMovimento}</button>
+            </h2>
+            <div class="accordiom-collapse collapse" id="flush-collapse{id}" aria-labelledby="flush-heading{id}" data-bs-parent="#accordionMoviments">
+              <div class="accordion-body">
+                <div>
+                  <div>
+                    <h6>Grau de Amplitude</h6>
+                    <p class="alert alert-warning">{movimento.grauDeAmplitude}</p>
+                  </div>
+                  <div>
+                    <h6>Músculos</h6>
+                    <div class="dropdown-center list-group-item">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Agonistas
+                        <button class="badge bg-success">
+                          {movimento.musculosDeMovimento.agonistas.length}
+                        </button>
+                      </button>
+                      <ul class="dropdown-menu">
+                        {movimento.musculosDeMovimento.agonistas}
+                        # para cada item
+                        <li class="dropdown-item">
+                          <a href="#modalMuscles" data-bs-toggle="modal" role="button" onclick=(createOrigemEInsercao(dataMuscles[movimento.musculosDeMovimento.agonistas[0]].nome))>
+                            {dataMuscles[movimento.musculosDeMovimento.agonistas].nome}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>              
+                    <div class="dropdown-center list-group-item">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Sinergistas
+                        <button class="badge bg-success">
+                          {movimento.musculosDeMovimento.sinergistas.length}
+                        </button>
+                      </button>
+                      <ul class="dropdown-menu">
+                        {movimento.musculosDeMovimento.sinergistas}
+                        #para cada item
+                        <li class="dropdown-item">
+                          <a href="#modalMuscles" data-bs-toggle="modal" role="button" onclick=(createOrigemEInsercao(dataMuscles[movimento.musculosDeMovimento.sinergistas[0]].nome))>
+                            {dataMuscles[movimento.musculosDeMovimento.sinergistas[0]].nome}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                    </div>
+                    createListGroupItem("Antagonistas", movimento.musculosDeMovimento.antagonistas);
+                    <div class="dropdown-center list-group-item">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Antagonistas
+                        <button class="badge bg-success">
+                          {movimento.musculosDeMovimento.antagonistas.length}
+                        </button>
+                      </button>
+                      <ul class="dropdown-menu">
+                        {movimento.musculosDeMovimento.antagonistas}
+                        #para cada item
+                        <li class="dropdown-item">
+                          <a href="#modalMuscles" data-bs-toggle="modal" role="button" onclick=(createOrigemEInsercao(dataMuscles[movimento.musculosDeMovimento.antagonistas[0]].nome))>
+                            {dataMuscles[movimento.musculosDeMovimento.antagonistas[0]].nome}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="modalMuscles" tab-index="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center display-6 m-auto" id="m_title">
+            ###se vazio
+            <span class='alert alert-danger'>Músculo não encontrado...</span>
+            #### caso contario
+            {dataMuscles[movimento.musculosDeMovimento.agonistas[0]].nome}
+          </h5>
+        </div>
+        <div class="modal-body">
+          <div class="card mb-3" style="max-width: 540px">
+            <div class="row g-0"></div>
+            <div class="card-body">
+              <ul id="list_origens" class="list-group">
+                <li class="list-group-item list-group-item-action active">Origem</li>
+                <li class="list-group-item">{dataMuscles[movimento.musculosDeMovimento.agonistas[0].origem[0]]}</li>
+                <li class="list-group-item">{dataMuscles[movimento.musculosDeMovimento.agonistas[0].origem[1]]}</li>
+                <li class="list-group-item">{dataMuscles[movimento.musculosDeMovimento.agonistas[0].origem[2]]}</li>
+              </ul>
+              <hr />
+              <ul id="list_insercoes" class="list_group">
+                <li class="list-group-item list-group-item-action active">Inserção</li>
+                <li class="list-group-item">{dataMuscles[movimento.musculosDeMovimento.agonistas[0].insercao[0]]}</li>
+                <li class="list-group-item">{dataMuscles[movimento.musculosDeMovimento.agonistas[0].insercao[1]]}</li>
+                <li class="list-group-item">{dataMuscles[movimento.musculosDeMovimento.agonistas[0].insercao[2]]}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
