@@ -229,7 +229,7 @@ const dataArticulacoes = [
   },
   {
     nomeArticulacao: "Articulação do Tornozelo",
-    urlImagem: "images/punho.png",
+    urlImagem: "images/tornozelo.png",
     movimentos: [
       {
         nomeMovimento: "Dorsiflexão",
